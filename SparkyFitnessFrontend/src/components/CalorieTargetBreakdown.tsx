@@ -631,7 +631,11 @@ export const CalorieTargetBreakdown: React.FC<CalorieTargetBreakdownProps> = ({
               {t('settings.breakdown.adaptiveFormula', {
                 defaultValue:
                   'Formula: Average Daily Calories − (Daily Weight Change in {{massUnit}} × {{kcalPerUnit}} kcal/{{massUnit}})',
-                kcalPerKg: kcalPerTrendUnit,
+                // kcalPerKg stays the fixed kg constant: the de/es/ru locale
+                // strings for this key are not yet migrated off it and hardcode
+                // "kg" in their prose, so this placeholder must keep meaning kg.
+                // kcalPerUnit is the only slot that carries the trend-unit value.
+                kcalPerKg: ENERGY_DENSITY_KCAL_PER_KG,
                 kcalPerUnit: kcalPerTrendUnit,
                 massUnit: trendMassUnit,
                 unit: trendMassUnit,
@@ -641,14 +645,17 @@ export const CalorieTargetBreakdown: React.FC<CalorieTargetBreakdownProps> = ({
               {t('settings.breakdown.adaptiveFormulaExplainer', {
                 defaultValue:
                   '{{kcalPerUnit}} kcal/{{massUnit}} is how much energy a {{unitName}} of body weight represents, so your weight trend can be converted into calories. Body weight lost or gained is a mix of fat (~{{fatPerUnit}} kcal/{{massUnit}}) and lean tissue and water (~{{leanPerUnit}} kcal/{{massUnit}}), and {{kcalPerUnit}} reflects a typical blend.',
-                kcalPerKg: kcalPerTrendUnit,
+                // Same reasoning as adaptiveFormula above: the *PerKg names are
+                // pinned to the kg constants for the unmigrated locale strings
+                // that still hardcode "kg"; *PerUnit carries the trend value.
+                kcalPerKg: ENERGY_DENSITY_KCAL_PER_KG,
                 kcalPerUnit: kcalPerTrendUnit,
                 massUnit: trendMassUnit,
                 unit: trendMassUnit,
                 unitName: trendMassUnitName,
-                fatPerKg: fatPerTrendUnit.toLocaleString(),
+                fatPerKg: FAT_KCAL_PER_KG.toLocaleString(),
                 fatPerUnit: fatPerTrendUnit.toLocaleString(),
-                leanPerKg: leanPerTrendUnit.toLocaleString(),
+                leanPerKg: LEAN_TISSUE_KCAL_PER_KG.toLocaleString(),
                 leanPerUnit: leanPerTrendUnit.toLocaleString(),
               })}
             </p>
@@ -889,7 +896,11 @@ export const CalorieTargetBreakdown: React.FC<CalorieTargetBreakdownProps> = ({
                         daily: toTrendMass(
                           adaptiveTdeeData.dailyWeightChangeKg ?? 0
                         ).toFixed(4),
-                        kcalPerKg: kcalPerTrendUnit,
+                        // kcalPerKg pinned to the kg constant, same reasoning
+                        // as adaptiveFormula above: an unmigrated locale string
+                        // for this key would hardcode "kg" and only fill this
+                        // placeholder, not kcalPerUnit.
+                        kcalPerKg: ENERGY_DENSITY_KCAL_PER_KG,
                         kcalPerUnit: kcalPerTrendUnit,
                         unit: trendMassUnit,
                         massUnit: trendMassUnit,
