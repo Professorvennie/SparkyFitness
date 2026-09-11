@@ -25,6 +25,10 @@ export const profileQueryKey = ['userProfile'] as const;
 
 export const waterContainersQueryKey = ['waterContainers'] as const;
 
+/** A day's individual logged drinks — the rows behind the day's water total. */
+export const waterIntakeLogQueryKey = (date: string) =>
+  ['waterIntakeLog', date] as const;
+
 export const foodsQueryKey = ['foods'] as const;
 
 export const favoritesQueryKey = ['favorites'] as const;
@@ -130,6 +134,36 @@ export const checkInPhotoDatesQueryKey = [
 export const customCategoriesQueryKey = ['customCategories'] as const;
 export const customMeasurementsByDateQueryKey = (date: string) =>
   ['customMeasurements', date] as const;
+
+/**
+ * Per-field carry-forward lookup (newest value on or before the day). Separate
+ * from `measurementsQueryKey`, which is strictly the day's own recorded row:
+ * the editor needs both to tell an actual value from a suggestion.
+ */
+export const latestMeasurementsOnOrBeforeRootQueryKey = [
+  'measurementsLatestOnOrBefore',
+] as const;
+
+/**
+ * Per-field carry-forward lookup for one day. Date keys extend the root so
+ * invalidation can target the whole family: a value saved on one day can be the
+ * newest "on or before" value for every later cached day, so invalidating only
+ * the saved day would leave the others serving a stale suggestion.
+ */
+export const latestMeasurementsOnOrBeforeQueryKey = (date: string) =>
+  [...latestMeasurementsOnOrBeforeRootQueryKey, date] as const;
+
+/**
+ * Root for the per-category custom previous-value lookups. Extended by date for
+ * the same reason as the standard field family above.
+ */
+export const latestManualCustomEntriesRootQueryKey = [
+  'customMeasurementsLatestManualOnOrBefore',
+] as const;
+
+/** Latest manual value per custom category on or before the day. */
+export const latestManualCustomEntriesQueryKey = (date: string) =>
+  [...latestManualCustomEntriesRootQueryKey, date] as const;
 
 export const exerciseHistoryQueryKey = ['exerciseHistory'] as const;
 
